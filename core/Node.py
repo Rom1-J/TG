@@ -14,6 +14,9 @@ class Node:
     __predecessors: Optional[List["Node"]]
     __successors: Optional[List["Node"]]
 
+    __earliest: float
+    __latest: float
+
     def __init__(
             self,
             name: str,
@@ -28,13 +31,18 @@ class Node:
 
         self.duration = duration
 
+        self.earliest = 0
+        self.latest = 0
+
     # =========================================================================
     # =========================================================================
 
     def __repr__(self):
         return f"({self.name}/{self.duration}|" \
                f"p:{''.join(p.name for p in self.predecessors)}|" \
-               f"s:{''.join(s.name for s in self.successors)})"
+               f"s:{''.join(s.name for s in self.successors)} - " \
+               f"e:{self.earliest}|" \
+               f"l:{self.latest})"
 
     __str__ = __repr__
 
@@ -86,6 +94,30 @@ class Node:
     @successors.setter
     def successors(self, value: Optional[List["Node"]]):
         self.__successors = value
+
+    # =========================================================================
+
+    @property
+    def earliest(self) -> float:
+        """Node earliest time of arrival"""
+
+        return self.__earliest
+
+    @earliest.setter
+    def earliest(self, value: float):
+        self.__earliest = value
+
+    # =========================================================================
+
+    @property
+    def latest(self) -> float:
+        """Node latest time of arrival"""
+
+        return self.__latest
+
+    @latest.setter
+    def latest(self, value: float):
+        self.__latest = value
 
     # =========================================================================
     # =========================================================================

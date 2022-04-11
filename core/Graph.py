@@ -36,6 +36,9 @@ class Graph:
 
         self._generate_ranks()
 
+        self._generate_earliest()
+        self._generate_latest()
+
         self.__checks = [check(self) for check in CHECKS]
         self._run_checks()
 
@@ -246,6 +249,20 @@ class Graph:
                 del nodes_indexes[rank - i]
 
         self.ranks = ranks
+
+    # =========================================================================
+
+    def _generate_earliest(self):
+        for node in self.nodes.values():
+            if predecessors := node.predecessors:
+                node.earliest = max(
+                    [p.earliest + p.duration for p in predecessors]
+                )
+
+    # =========================================================================
+
+    def _generate_latest(self):  # pylint: disable=no-self-use
+        ...
 
     # =========================================================================
     # =========================================================================

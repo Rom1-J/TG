@@ -2,8 +2,8 @@
 App
 """
 
-from core.Parser import Parser
 from core.Graph import Graph
+from core.Parser import Parser
 
 
 def main():
@@ -15,7 +15,9 @@ def main():
     graph = Graph(*parser.dump())
 
     print(graph)
-    graph.checks()
+
+    graph.print_checks()
+    graph.print_ranks()
 
 
 if __name__ == "__main__":

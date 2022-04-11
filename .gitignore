@@ -44,4 +44,4 @@ build
 .envs/*
 !.envs/.local/
 
-.tmp
+tmp

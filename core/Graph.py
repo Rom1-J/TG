@@ -2,7 +2,7 @@
 Graph worker
 """
 import string
-from typing import Dict
+from typing import Dict, List
 
 import numpy as np
 
@@ -24,6 +24,9 @@ class Graph:
     __ajd_matrix: np.ndarray
     __val_matrix: np.ndarray
 
+    __ranks: List[List[Node]]
+    __checks_results: Dict[str, List[str]]
+
     def __init__(self, predecessors: dict, duration: dict):
         self.predecessors = predecessors
         self.duration = duration
@@ -31,13 +34,16 @@ class Graph:
         self._generate_nodes()
         self._generate_matrix()
 
+        self._generate_ranks()
+
         self.__checks = [check(self) for check in CHECKS]
+        self._run_checks()
 
     # =========================================================================
     # =========================================================================
 
     def __str__(self):
-        return f"Adjacent matrix:\n {self.ajd_matrix}\n\n" \
+        return f"Adjacent matrix:\n {self.adj_matrix}\n\n" \
                f"Value matrix: \n {self.val_matrix}"
 
     # =========================================================================
@@ -95,7 +101,7 @@ class Graph:
     # =========================================================================
 
     @property
-    def ajd_matrix(self) -> np.ndarray:
+    def adj_matrix(self) -> np.ndarray:
         """Adjacent matrix representation of this graph
 
         Returns
@@ -105,8 +111,8 @@ class Graph:
 
         return self.__ajd_matrix
 
-    @ajd_matrix.setter
-    def ajd_matrix(self, value: np.ndarray):
+    @adj_matrix.setter
+    def adj_matrix(self, value: np.ndarray):
         self.__ajd_matrix = value
 
     # =========================================================================
@@ -125,6 +131,40 @@ class Graph:
     @val_matrix.setter
     def val_matrix(self, value: np.ndarray):
         self.__val_matrix = value
+
+    # =========================================================================
+
+    @property
+    def ranks(self) -> List[List[Node]]:
+        """Ranks of this graph
+
+        Returns
+        -------
+        List[List[Node]]
+        """
+
+        return self.__ranks
+
+    @ranks.setter
+    def ranks(self, value: List[List[Node]]):
+        self.__ranks = value
+
+    # =========================================================================
+
+    @property
+    def checks_results(self) -> Dict[str, List[str]]:
+        """Passed & Failed checks
+
+        Returns
+        -------
+        Dict[str, List[str]]
+        """
+
+        return self.__checks_results
+
+    @checks_results.setter
+    def checks_results(self, value: Dict[str, List[str]]):
+        self.__checks_results = value
 
     # =========================================================================
     # =========================================================================
@@ -177,25 +217,62 @@ class Graph:
                             i, ALPHABET.index(predecessor.name) + 1
                         ] = str(predecessor.duration)
 
-        self.ajd_matrix = ajd_matrix
-        self.val_matrix = val_matrix
+        self.adj_matrix = ajd_matrix.T
+        self.val_matrix = val_matrix.T
+
+    # =========================================================================
+
+    def _generate_ranks(self):
+        adj_matrix = self.adj_matrix.copy()
+        nodes_indexes = list(self.nodes.values())
+
+        ranks = {}
+
+        while adj_matrix.shape != (0, 0):
+            current_rank = []
+
+            # populate ranks
+            for i in range(adj_matrix.shape[1]):
+                if not any(adj_matrix[:, i]):
+                    current_rank.append(i)
+
+            ranks[len(ranks)] = [nodes_indexes[i] for i in current_rank]
+
+            # clean cols/rows
+            for i, rank in enumerate(current_rank):
+                adj_matrix = np.delete(adj_matrix, rank - i, 0)
+                adj_matrix = np.delete(adj_matrix, rank - i, 1)
+
+                del nodes_indexes[rank - i]
+
+        self.ranks = ranks
 
     # =========================================================================
     # =========================================================================
 
-    def checks(self):
-        """Run set of checks"""
+    def _run_checks(self):
         passed = []
         failed = []
 
         for check in self.__checks:
             name = check.__class__.__name__
 
-            print(f"Testing {name}: ", end="")
-
             if check.check():
                 passed.append(name)
-                print("passed")
             else:
                 failed.append(name)
-                print("failed")
+
+        self.__checks_results = {"passed": passed, "failed": failed}
+
+    # =========================================================================
+    # =========================================================================
+
+    def print_ranks(self):
+        """Print ranks"""
+        print(self.ranks)
+
+    # =========================================================================
+
+    def print_checks(self):
+        """Print checks results"""
+        print(self.checks_results)

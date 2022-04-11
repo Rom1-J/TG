@@ -42,7 +42,8 @@ class Node:
                f"p:{''.join(p.name for p in self.predecessors)}|" \
                f"s:{''.join(s.name for s in self.successors)} - " \
                f"e:{self.earliest}|" \
-               f"l:{self.latest})"
+               f"l:{self.latest}|" \
+               f"g:{self.gap})"
 
     __str__ = __repr__
 
@@ -118,6 +119,13 @@ class Node:
     @latest.setter
     def latest(self, value: float):
         self.__latest = value
+
+    # =========================================================================
+
+    @property
+    def gap(self):
+        """Gap between latest & earliest"""
+        return self.latest - self.earliest
 
     # =========================================================================
     # =========================================================================

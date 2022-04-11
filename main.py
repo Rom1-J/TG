@@ -1,6 +1,7 @@
 """
 App
 """
+from pprint import pprint
 
 from core.Graph import Graph
 from core.Parser import Parser
@@ -13,7 +14,7 @@ def main():
     parser.parse()
 
     graph = Graph(*parser.dump())
-    print(graph)
+    pprint(list(graph.nodes.values()))
 
 
 if __name__ == "__main__":

@@ -40,4 +40,4 @@ class SameExitValues:
     @staticmethod
     def check():
         """Run check"""
-        return True  # note: can't happens ¯\_(ツ)_/¯
+        return True  # note: can't happen ¯\_(ツ)_/¯

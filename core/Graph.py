@@ -24,7 +24,7 @@ class Graph:
     __ajd_matrix: np.ndarray
     __val_matrix: np.ndarray
 
-    __ranks: List[List[Node]]
+    __ranks: Dict[int, List[Node]]
     __checks_results: Dict[str, List[str]]
 
     def __init__(self, predecessors: dict, duration: dict):
@@ -138,18 +138,18 @@ class Graph:
     # =========================================================================
 
     @property
-    def ranks(self) -> List[List[Node]]:
+    def ranks(self) -> Dict[int, List[Node]]:
         """Ranks of this graph
 
         Returns
         -------
-        List[List[Node]]
+        Dict[int, List[Node]]
         """
 
         return self.__ranks
 
     @ranks.setter
-    def ranks(self, value: List[List[Node]]):
+    def ranks(self, value: Dict[int, List[Node]]):
         self.__ranks = value
 
     # =========================================================================
@@ -253,16 +253,26 @@ class Graph:
     # =========================================================================
 
     def _generate_earliest(self):
-        for node in self.nodes.values():
-            if predecessors := node.predecessors:
-                node.earliest = max(
-                    [p.earliest + p.duration for p in predecessors]
-                )
+        for rank in self.ranks.values():
+            for node in rank:
+                if predecessors := node.predecessors:
+                    node.earliest = max(
+                        [p.earliest + p.duration for p in predecessors]
+                    )
+
+        self.nodes["omega"].latest = self.nodes["omega"].earliest
 
     # =========================================================================
 
-    def _generate_latest(self):  # pylint: disable=no-self-use
-        ...
+    def _generate_latest(self):
+        for rank in reversed(self.ranks.values()):
+            for node in rank:
+                if successors := node.successors:
+                    for successor in successors:
+                        successor.latest = min([
+                            s.latest - successor.duration
+                            for s in successor.successors
+                        ])
 
     # =========================================================================
     # =========================================================================

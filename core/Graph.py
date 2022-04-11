@@ -5,11 +5,11 @@ import string
 from typing import Dict, List
 
 import numpy as np
-
 from rich.console import Console
 
 from core.checks import CHECKS
 from core.Node import Node
+
 
 ALPHABET = string.ascii_uppercase
 console = Console()

@@ -1,14 +1,13 @@
 """
 App
 """
-from pprint import pprint
-
 from rich.console import Console
-from rich.table import Table
 from rich.prompt import IntPrompt
+from rich.table import Table
 
 from core.Graph import Graph
 from core.Parser import Parser
+
 
 console = Console()
 

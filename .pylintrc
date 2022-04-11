@@ -9,6 +9,7 @@ good-names=
 [MASTER]
 disable=
 	C0103,  # invalid-name
+	C0209,  # consider-using-f-string
     W0511,  # fixme
 	W1514,  # unspecified-encoding
     R0801,  # duplicate-code

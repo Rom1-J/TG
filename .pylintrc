@@ -1,0 +1,11 @@
+[BASIC]
+good-names=
+    e,  # (exception) as e
+    f,  # (file) as f
+    k,  # for k, v in
+    v,  # for k, v in
+    i,  # for i
+
+[MASTER]
+disable=
+	W1514,  # unspecified-encoding

@@ -39,4 +39,4 @@ class NullEntryValues:
 
     def check(self):
         """Run check"""
-        return self.graph.nodes["alpha"].duration == 0
+        return self.graph.nodes["α"].duration == 0

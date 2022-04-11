@@ -44,15 +44,15 @@ class NoCircuit:
         # noinspection PyPep8Naming
         ITER = 100
 
-        del nodes["alpha"]
-        del nodes["omega"]
+        del nodes["α"]
+        del nodes["ω"]
 
         for _ in range(ITER):
             for node in nodes.copy().values():
                 has_predecessor = False
 
                 for predecessor in node.predecessors:
-                    if (name := predecessor.name) in nodes and name != "alpha":
+                    if (name := predecessor.name) in nodes and name != "α":
                         has_predecessor = True
 
                 if not has_predecessor:

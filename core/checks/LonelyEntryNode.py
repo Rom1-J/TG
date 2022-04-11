@@ -40,4 +40,4 @@ class LonelyEntryNode:
     @staticmethod
     def check():
         """Run check"""
-        return True  # todo: find a case where alpha can be more than 1
+        return True  # todo: find a case where α can be more than 1

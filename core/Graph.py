@@ -6,11 +6,13 @@ from typing import Dict, List
 
 import numpy as np
 
+from rich.console import Console
+
 from core.checks import CHECKS
 from core.Node import Node
 
-
 ALPHABET = string.ascii_uppercase
+console = Console()
 
 
 class Graph:
@@ -34,20 +36,44 @@ class Graph:
         self._generate_nodes()
         self._generate_matrix()
 
-        self._generate_ranks()
-
-        self._generate_earliest()
-        self._generate_latest()
-
         self.__checks = [check(self) for check in CHECKS]
         self._run_checks()
+
+        if passed := self.checks_results["passed"]:
+            console.log("Test %s: [green]✓" % '|'.join(passed))
+
+        if failed := self.checks_results["failed"]:
+            console.log("Test %s: [red]✕" % '|'.join(failed))
+
+        if self.checks_results["failed"]:
+            console.log("Graph invalide")
+        else:
+            self._generate_ranks()
+
+            self._generate_earliest()
+            self._generate_latest()
 
     # =========================================================================
     # =========================================================================
 
     def __str__(self):
-        return f"Adjacent matrix:\n {self.adj_matrix}\n\n" \
-               f"Value matrix: \n {self.val_matrix}"
+        return f"Matrice d'adjacence:\n " \
+               f"{self.__render_matrix(self.adj_matrix)}\n" \
+               f"Value matrix: \n " \
+               f"{self.__render_matrix(self.val_matrix)}"
+
+    # =========================================================================
+    # =========================================================================
+
+    def __render_matrix(self, matrix: np.ndarray) -> str:
+        out = " " + " ".join(self.nodes) + "\n"
+
+        for i, row in enumerate(matrix):
+            out += list(self.nodes.keys())[i] + " "
+            out += " ".join(str(el) for el in row)
+            out += "\n"
+
+        return out
 
     # =========================================================================
     # =========================================================================
@@ -174,7 +200,7 @@ class Graph:
 
     def _generate_nodes(self):
         nodes: Dict[str, Node] = {
-            "alpha": Node("alpha", duration=0),
+            "α": Node("α", duration=0),
         }
 
         for node, duration in zip(
@@ -182,7 +208,7 @@ class Graph:
         ):
             nodes[node] = Node(node, duration=duration)
 
-        nodes["omega"] = Node("omega", duration=0)
+        nodes["ω"] = Node("ω", duration=0)
 
         for node, predecessors in self.predecessors.items():
             for predecessor in list(predecessors):
@@ -191,12 +217,12 @@ class Graph:
 
         for node in nodes.values():
             if not node.predecessors and node.successors:
-                nodes["alpha"].successors.append(node)
-                node.predecessors.append(nodes["alpha"])
+                nodes["α"].successors.append(node)
+                node.predecessors.append(nodes["α"])
 
             if not node.successors and node.predecessors:
-                nodes["omega"].predecessors.append(node)
-                node.successors.append(nodes["omega"])
+                nodes["ω"].predecessors.append(node)
+                node.successors.append(nodes["ω"])
 
         self.nodes = nodes
 
@@ -211,10 +237,10 @@ class Graph:
         for i, node in enumerate(self.nodes.values()):
             if predecessors := node.predecessors:
                 for predecessor in predecessors:
-                    if predecessor.name == "alpha":
+                    if predecessor.name == "α":
                         ajd_matrix[i, 0] = 1
                         val_matrix[i, 0] = "0"
-                    elif predecessor.name != "omega":
+                    elif predecessor.name != "ω":
                         ajd_matrix[i, ALPHABET.index(predecessor.name) + 1] = 1
                         val_matrix[
                             i, ALPHABET.index(predecessor.name) + 1
@@ -260,7 +286,7 @@ class Graph:
                         [p.earliest + p.duration for p in predecessors]
                     )
 
-        self.nodes["omega"].latest = self.nodes["omega"].earliest
+        self.nodes["ω"].latest = self.nodes["ω"].earliest
 
     # =========================================================================
 
@@ -293,13 +319,3 @@ class Graph:
 
     # =========================================================================
     # =========================================================================
-
-    def print_ranks(self):
-        """Print ranks"""
-        print(self.ranks)
-
-    # =========================================================================
-
-    def print_checks(self):
-        """Print checks results"""
-        print(self.checks_results)

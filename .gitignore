@@ -43,3 +43,5 @@ build
 .env
 .envs/*
 !.envs/.local/
+
+.tmp

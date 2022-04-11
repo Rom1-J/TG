@@ -2,17 +2,20 @@
 App
 """
 
-from core.parser import Parser
+from core.Parser import Parser
+from core.Graph import Graph
 
 
 def main():
     """Main function"""
 
-    parser = Parser("data/table 5.txt")
-    p, w = parser.parse()
+    parser = Parser("data/table 3.txt")
+    parser.parse()
 
-    print(p)
-    print(w)
+    graph = Graph(*parser.dump())
+
+    print(graph)
+    graph.checks()
 
 
 if __name__ == "__main__":
